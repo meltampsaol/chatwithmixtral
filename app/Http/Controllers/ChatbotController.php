@@ -72,20 +72,29 @@ class ChatBotController extends Controller
             }
         }
 
-        $prompt = <<<PROMPT
-        You are a conversational assistant. Analyze and provide responses based on the user's input.
-        User input: "$userPrompt"
-        
-        System information:
-        $dbInfo
-        
-        Output format: Conversational reply in 1-2 sentences.
-        PROMPT;
+        $prompt=<<<PROMPT
+### Instruction:
+You are a smart and conversational assistant. Your task is to understand the user's intent and respond accordingly in a friendly and helpful tone. Maintain context throughout the conversation.
+
+Common user request patterns include:
+- "Please show to me the ..."
+- "Give me the ..." 
+- "Show me the ..."
+
+**Key Requirements**:
+1. Carefully analyze this user input: $userPrompt
+2. Use this system/database info if relevant: $dbInfo
+3. Respond in 1-2 natural, conversational sentences
+4. Avoid repeating the user's exact wording
+5. If information is unavailable, say so politely
+
+### Response:
+PROMPT;
         try {
             $response = Http::timeout(60)->post(env('OLLAMA_API_URL'), [
                 'model' => env('OLLAMA_MODEL'),
                 'prompt' => $prompt,
-                'stream' => true,
+                'stream' => false,
                 'format' => 'json',
             ]);
         } catch (ConnectionException $e) {
@@ -117,7 +126,7 @@ class ChatBotController extends Controller
             $response = Http::timeout(60)->post(env('OLLAMA_API_URL'), [
                 'model' => env('OLLAMA_MODEL'),
                 'prompt' => $prompt,
-                'stream' => true,
+                'stream' => false,
                 'format' => 'json',
             ]);
         } catch (ConnectionException $e) {

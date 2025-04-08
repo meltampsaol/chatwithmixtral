@@ -154,7 +154,7 @@
                         prompt: message
                     });
 
-                    // Parse the reply and extract the "content" field
+                    
                     const parsedReply = JSON.parse(response.data.reply); // Decode nested JSON
                     const botReply = parsedReply.content || "No content available";
 
@@ -162,7 +162,7 @@
                     addMessage('bot', botReply);
                 } catch (error) {
                     console.error(error);
-                    addMessage('bot', "Sorry, something went wrong.");
+                    addMessage('bot', error);
                 }
 
                 userInput.value = ''; // Clear input field
