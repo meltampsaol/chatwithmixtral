@@ -6,6 +6,10 @@
 /storage/*.key
 /storage/pail
 /vendor
+/model_cache/
+model_cache/
+*.bin
+*.safetensors
 .env
 .env.backup
 .env.production
