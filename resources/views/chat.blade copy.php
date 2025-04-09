@@ -88,8 +88,30 @@
         .send-btn:hover {
             background-color: #0056b3;
         }
+
+        /* Add to your styles */
+        .loading {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .loading-dot {
+            animation: dotPulse 1.4s infinite;
+        }
+
+        @keyframes dotPulse {
+
+            0%,
+            80%,
+            100% {
+                opacity: 0.3;
+            }
+
+            40% {
+                opacity: 1;
+            }
+        }
     </style>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
 
 <body>
@@ -109,7 +131,7 @@
         const chatBox = document.getElementById('chatBox');
         const userInput = document.getElementById('userInput');
         const sendButton = document.getElementById('sendButton');
-
+    
         function addMessage(sender, text) {
             const messageElement = document.createElement('div');
             messageElement.classList.add('message');
@@ -118,42 +140,42 @@
             chatBox.appendChild(messageElement);
             chatBox.scrollTop = chatBox.scrollHeight;
         }
-
+    
         sendButton.addEventListener('click', async () => {
             const message = userInput.value.trim();
-            if (!message) return;
-
-            addMessage('user', message);
-
-            try {
-                const response = await fetch('/api/chat', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        prompt: message
-                    })
-                });
-
-                const data = await response.json();
-
-                const botReply = data.reply || 'No content available';
-                addMessage('bot', botReply);
-            } catch (error) {
-                console.error('Fetch error:', error);
-                addMessage('bot', 'Error: ' + error.message);
+            if (message) {
+                addMessage('user', message);
+    
+                try {
+                    const response = await fetch('/api/chat', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ prompt: message })
+                    });
+    
+                    const data = await response.json();
+                    const parsedReply = JSON.parse(data.reply);
+                    const botReply = parsedReply.content || "No content available";
+    
+                    addMessage('bot', botReply);
+                } catch (error) {
+                    console.error(error);
+                    addMessage('bot', 'Error: ' + error.message);
+                }
+    
+                userInput.value = '';
             }
-
-            userInput.value = '';
         });
-
+    
         userInput.addEventListener('keyup', (event) => {
             if (event.key === 'Enter') {
                 sendButton.click();
             }
         });
     </script>
+    
 </body>
 
 </html>
